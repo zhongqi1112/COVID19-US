@@ -24,15 +24,5 @@ pipeline {
                 sh 'npm run build'
             }
         }
-        stage('Deploy') {
-            steps {
-                sh 'rm -rf docs'
-                sh 'mv dist docs'
-                sh 'git add .'
-                sh 'git commit -m "Deploy" '
-                sh 'git remote add origin https://github.com/zhongqi1112/covid19us.git'
-                sh 'git push -u origin master'
-            }
-        }
     }
 }
