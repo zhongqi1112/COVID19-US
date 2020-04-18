@@ -1,5 +1,5 @@
 module.exports = {
   "transpileDependencies": [
-    "vuetify"
+    /\bvue-awesome\b/
   ]
 }
