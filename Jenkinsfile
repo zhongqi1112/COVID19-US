@@ -2,14 +2,24 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('Clear Workspace') {
             steps {
-                echo 'Building..'
+                deleteDir()
             }
         }
-        stage('Test') {
+        stage('Checkout') {
             steps {
-                echo 'Testing..'
+                checkout scm
+            }
+        }
+        stage('Setup') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'npm run build'
             }
         }
         stage('Deploy') {
