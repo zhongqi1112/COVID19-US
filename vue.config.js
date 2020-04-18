@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production'
-    ? '/COVID-19_U.S./'
-    : '/'
+  transpileDependencies: [
+    /\bvue-awesome\b/
+  ]
 }
