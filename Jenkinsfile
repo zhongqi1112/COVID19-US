@@ -26,7 +26,11 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                echo 'Deploying....'
+                sh 'rm -rf docs'
+                sh 'mv dist docs'
+                sh 'git add .'
+                sh 'git commit -m "Deploy" '
+                sh 'git push'
             }
         }
     }
