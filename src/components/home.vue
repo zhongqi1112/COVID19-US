@@ -2,9 +2,9 @@
   <v-container>
     <v-row class="text-center">
       <v-col class="mb-4">
-        <h1 class="display-2 font-weight-bold mb-3">
+        <p class="display-2 font-weight-bold mb-3">
           COVID-19 U.S.
-        </h1>
+        </p>
       </v-col>
 
       <v-col
@@ -24,7 +24,7 @@
         cols="12"
       >
         <p class="subheading font-weight-regular">
-          Infected
+          Confirmed
         </p>
         <h2 class="display-3 font-weight-bold mb-3">
           {{ totalConfirmed }}
@@ -102,14 +102,17 @@
             this.yesterdayConfirmed = yesterday.todayCases
           }
           // assign data
-          this.newConfirmed = today.todayCases + this.yesterdayConfirmed
           this.updated = today.updated
-          this.totalConfirmed = today.cases
-          this.totalRecovered = today.recovered
-          this.totalDeaths = today.deaths
+          this.newConfirmed = this.numberWithCommas(today.todayCases + this.yesterdayConfirmed)
+          this.totalConfirmed = this.numberWithCommas(today.cases)
+          this.totalRecovered = this.numberWithCommas(today.recovered)
+          this.totalDeaths = this.numberWithCommas(today.deaths)
         } catch(e) {
           console.error(e)
         }
+      },
+      numberWithCommas(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
       }
     }
   }
