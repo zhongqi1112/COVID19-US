@@ -44,7 +44,7 @@
       </v-col>
 
       <v-col
-        class="mb-5 blue-grey--text text--darken-4"
+        class="mb-5 blue-grey--text text--darken-3"
         cols="12"
       >
         <p class="subheading font-weight-regular">
@@ -54,11 +54,8 @@
           {{ totalDeaths }}
         </h2>
       </v-col>
-
-      <v-col
-        class="mb-5"
-        cols="12"
-      >
+      <v-col>
+        <div>Updated: {{ updatedTime }}</div>
       </v-col>
     </v-row>
   </v-container>
@@ -68,24 +65,52 @@
   export default {
     name: 'Home',
     data: () => ({
+      minutesPerHour: 60,
+      hoursPerDay: 24,
+      updated: 0,
       newConfirmed: 0,
+      yesterdayConfirmed: 0,
       totalConfirmed: 0,
       newRecovered: 0,
       totalRecovered: 0,
       newDeaths: 0,
       totalDeaths: 0
     }),
-    beforeCreate () {
-      fetch('https://coronavirus-19-api.herokuapp.com/countries/USA')
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          this.newConfirmed = data.todayCases
-          this.totalConfirmed = data.cases
-          this.totalRecovered = data.recovered
-          this.totalDeaths = data.deaths
-        })
+    computed: {
+      updatedTime: function () {
+        var time = new Date(this.updated)
+        var updatedDate = time.toLocaleDateString("en-US") + ' ' + time.toLocaleTimeString("en-US") + ' PDT'
+        return updatedDate
+      }
+    },
+    created () {
+      this.fetchData()
+    },
+    methods: {
+      async fetchData () {
+        try {
+          var yesterday = null
+          var currentTime = new Date()
+          var timezone = currentTime.getTimezoneOffset() / this.minutesPerHour
+          // fecth today data
+          var todayData = await fetch('https://corona.lmao.ninja/v2/countries/USA')
+          var today = await todayData.json()
+          // if pass utc 00:00 then fect yesterday data
+          if (currentTime.getHours() >= this.hoursPerDay - timezone) {
+            var yesterdayData = await fetch('https://corona.lmao.ninja/v2/countries/USA?yesterday=true')
+            yesterday = await yesterdayData.json()
+            this.yesterdayConfirmed = yesterday.todayCases
+          }
+          // assign data
+          this.newConfirmed = today.todayCases + this.yesterdayConfirmed
+          this.updated = today.updated
+          this.totalConfirmed = today.cases
+          this.totalRecovered = today.recovered
+          this.totalDeaths = today.deaths
+        } catch(e) {
+          console.error(e)
+        }
+      }
     }
   }
 </script>
