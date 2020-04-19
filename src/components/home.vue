@@ -36,7 +36,7 @@
         cols="12"
       >
         <p class="subheading font-weight-regular">
-          Recoverd
+          Recovered
         </p>
         <h2 class="display-3 font-weight-bold mb-3">
           {{ totalRecovered }}
