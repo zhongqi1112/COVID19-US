@@ -109,10 +109,10 @@
           var todayData = await fetch('https://corona.lmao.ninja/v2/countries/USA')
           var today = await todayData.json()
           var currentTime = new Date()
-          var timezone = currentTime.getTimezoneOffset()
+          var timezone = currentTime.getTimezoneOffset() / this.minutesPerHour
           let yesterdayData = null
           let yesterday = null
-          if ((currentTime.getHours() === this.hoursPerDay - timezone && currentTime.getHours() >= this.minutesPerHour / 2) || (currentTime.getHours() > this.hoursPerDay - timezone)) {
+          if ((currentTime.getHours() === (this.hoursPerDay - timezone) && currentTime.getHours() >= this.minutesPerHour / 2) || (currentTime.getHours() > this.hoursPerDay - timezone)) {
             yesterdayData = await fetch('https://corona.lmao.ninja/v2/countries/USA?yesterday=true')
             yesterday = await yesterdayData.json()
             this.yesterdayConfirmed = yesterday.todayCases
