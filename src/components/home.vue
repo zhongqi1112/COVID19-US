@@ -159,12 +159,12 @@
 
 /* decrease padding for table body */
 /deep/ div.v-data-table td {
-  padding: 0 6px;
+  padding: 0 3px;
 }
 
 /* decrease padding for table header */
 /deep/ div.v-data-table th {
-  padding: 0 6px;
+  padding: 0 3px;
 }
 
 /* decrease margin for table footter  */
