@@ -70,10 +70,10 @@
       hoursPerDay: 24,
       yesterdayConfirmed: 0,
       updated: 0,
-      newConfirmed: 'Loading',
-      totalConfirmed: 'Loading',
-      totalRecovered: 'Loading',
-      totalDeaths: 'Loading',
+      newConfirmed: 0,
+      totalConfirmed: 0,
+      totalRecovered: 0,
+      totalDeaths: 0,
       headers: [
         {
           text: 'States',
@@ -83,7 +83,7 @@
         },
         { text: 'Confirmed', value: 'cases' },
         { text: 'Active', value: 'active' },
-        { text: 'Test', value: 'tests' },
+        { text: 'Tests', value: 'tests' },
         { text: 'Tests / Million', value: 'testsPerOneMillion' }
       ],
       statesList: []
@@ -146,12 +146,29 @@
   }
 </script>
 
-<style>
+<style scoped>
+/* remove margin from p tag */
 .v-application p {
   margin-bottom: 0px !important;
 }
 
+/* remove margin from  column*/
 .v-application .xs-12 {
   margin-bottom: 0px !important;
+}
+
+/* decrease padding for table body */
+/deep/ div.v-data-table td {
+  padding: 0 6px;
+}
+
+/* decrease padding for table header */
+/deep/ div.v-data-table th {
+  padding: 0 6px;
+}
+
+/* decrease margin for table footter  */
+/deep/ div.v-data-footer__pagination {
+  margin: 0 4px;
 }
 </style>
