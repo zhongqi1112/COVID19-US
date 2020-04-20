@@ -69,7 +69,6 @@
       hoursPerDay: 24,
       updated: 0,
       newConfirmed: 0,
-      yesterdayConfirmed: 0,
       totalConfirmed: 0,
       newRecovered: 0,
       totalRecovered: 0,
@@ -89,21 +88,12 @@
     methods: {
       async fetchData () {
         try {
-          var yesterday = null
-          var currentTime = new Date()
-          var timezone = currentTime.getTimezoneOffset() / this.minutesPerHour
           // fecth today data
           var todayData = await fetch('https://corona.lmao.ninja/v2/countries/USA')
           var today = await todayData.json()
-          // if pass utc 00:00 then fect yesterday data
-          if (currentTime.getHours() >= this.hoursPerDay - timezone) {
-            var yesterdayData = await fetch('https://corona.lmao.ninja/v2/countries/USA?yesterday=true')
-            yesterday = await yesterdayData.json()
-            this.yesterdayConfirmed = yesterday.todayCases
-          }
           // assign data
           this.updated = today.updated
-          this.newConfirmed = this.numberWithCommas(today.todayCases + this.yesterdayConfirmed)
+          this.newConfirmed = this.numberWithCommas(today.todayCases)
           this.totalConfirmed = this.numberWithCommas(today.cases)
           this.totalRecovered = this.numberWithCommas(today.recovered)
           this.totalDeaths = this.numberWithCommas(today.deaths)
@@ -111,8 +101,8 @@
           console.error(e)
         }
       },
-      numberWithCommas(num) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      numberWithCommas(n) {
+        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
       }
     }
   }
