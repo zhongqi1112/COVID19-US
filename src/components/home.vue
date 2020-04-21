@@ -91,7 +91,7 @@
     computed: {
       updatedTime: function () {
         var time = new Date(this.updated)
-        var updatedDate = time.toLocaleDateString("en-US") + ' ' + time.toLocaleTimeString("en-US") + ' PDT'
+        var updatedDate = time.toLocaleDateString("en-US") + ' ' + time.toLocaleTimeString("en-US")
         return updatedDate
       },
       states () {
