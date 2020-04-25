@@ -29,18 +29,24 @@
         <p class="subheading font-weight-regular">
           Recovered
         </p>
-        <h2 class="display-3 font-weight-bold mb-3">
+        <span class="display-3 font-weight-bold mb-3">
           {{ totalRecovered }}
-        </h2>
+        </span>
+        <span style="font-size:26px">
+          {{ recoveredRate }}%
+        </span>
       </v-col>
 
       <v-col class="xs-12 blue-grey--text text--darken-3" cols="12">
         <p class="subheading font-weight-regular">
           Deceased
         </p>
-        <h2 class="display-3 font-weight-bold mb-3">
+        <span class="display-3 font-weight-bold mb-3">
           {{ totalDeaths }}
-        </h2>
+        </span>
+        <span style="font-size:26px">
+          {{ deathRate }}%
+        </span>
       </v-col>
 
       <v-col class="xs-12" cols="12">
@@ -74,6 +80,8 @@
       totalConfirmed: 0,
       totalRecovered: 0,
       totalDeaths: 0,
+      recoveredRate: 0,
+      deathRate: 0,
       headers: [
         {
           text: 'States',
@@ -123,6 +131,8 @@
           this.totalConfirmed = this.numberWithCommas(today.cases)
           this.totalRecovered = this.numberWithCommas(today.recovered)
           this.totalDeaths = this.numberWithCommas(today.deaths)
+          this.recoveredRate = (today.recovered / today.cases * 100).toFixed(2)
+          this.deathRate = (today.deaths / today.cases * 100).toFixed(2)
         } catch(e) {
           console.error(e)
         }
