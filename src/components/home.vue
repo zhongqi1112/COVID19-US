@@ -94,7 +94,9 @@
         { text: 'Tests', value: 'tests' },
         { text: 'Tests / Million', value: 'testsPerOneMillion' }
       ],
-      statesList: []
+      statesList: [],
+      polling: null,
+      pollingTime: 30000 // 3 minutes
     }),
     computed: {
       updatedTime: function () {
@@ -107,8 +109,12 @@
       }
     },
     created () {
-      this.fetchStatesData()
       this.fetchData()
+      this.fetchStatesData()
+      this.pollingData()
+    },
+    beforeDestroy () {
+      clearInterval(this.polling)
     },
     methods: {
       async fetchData () {
@@ -149,7 +155,13 @@
           console.error(e)
         }
       },
-      numberWithCommas(n) {
+      pollingData () {
+        this.polling = setInterval(() => {
+          this.fetchData()
+          this.fetchStatesData()
+        }, this.pollingTime)
+      },
+      numberWithCommas (n) {
         return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
       }
     }
