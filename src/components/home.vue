@@ -122,23 +122,29 @@
           // fecth today data
           var todayData = await fetch('https://corona.lmao.ninja/v2/countries/USA')
           var today = await todayData.json()
-          var currentTime = new Date()
-          var timezone = currentTime.getTimezoneOffset() / this.minutesPerHour
-          let yesterdayData = null
-          let yesterday = null
-          if ((currentTime.getHours() === (this.hoursPerDay - timezone) && currentTime.getMinutes() >= this.minutesPerHour / 2) || (currentTime.getHours() > this.hoursPerDay - timezone)) {
-            yesterdayData = await fetch('https://corona.lmao.ninja/v2/countries/USA?yesterday=true')
-            yesterday = await yesterdayData.json()
-            this.yesterdayConfirmed = yesterday.todayCases
-          }
           // assign data
           this.updated = today.updated
-          this.newConfirmed = this.numberWithCommas(today.todayCases + this.yesterdayConfirmed)
+          //this.newConfirmed = this.numberWithCommas(today.todayCases)
           this.totalConfirmed = this.numberWithCommas(today.cases)
           this.totalRecovered = this.numberWithCommas(today.recovered)
           this.totalDeaths = this.numberWithCommas(today.deaths)
           this.recoveredRate = (today.recovered / today.cases * 100).toFixed(2)
           this.deathRate = (today.deaths / today.cases * 100).toFixed(2)
+          // fetch yesterday data
+          var currentTime = new Date()
+          var timezone = currentTime.getTimezoneOffset() / this.minutesPerHour
+          // if ((currentTime.getHours() === (this.hoursPerDay - timezone) && currentTime.getMinutes() >= this.minutesPerHour / 2) || (currentTime.getHours() > this.hoursPerDay - timezone)) {
+          if (currentTime.getHours() >= this.hoursPerDay - timezone) {
+            var yesterdayData = await fetch('https://corona.lmao.ninja/v2/countries/USA?yesterday=true')
+            var yesterday = await yesterdayData.json()
+            if (today.todayCases > yesterday.todayCases / 2) {
+              this.newConfirmed = this.numberWithCommas(today.todayCases)
+            } else {
+              this.newConfirmed = this.numberWithCommas(today.todayCases + yesterday.todayCases)
+            }
+          } else {
+            this.newConfirmed = this.numberWithCommas(today.todayCases)
+          }
         } catch(e) {
           console.error(e)
         }
