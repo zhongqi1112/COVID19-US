@@ -14,4 +14,4 @@ npm run build
 ```
 
 ## Preview
-<p align="center"><img src="https://github.com/zhongqi1112/COVID-19_U.S./blob/master/src/assets/homePage.png" alt="homePage"></p>
+<p align="center"><img width="350" src="https://github.com/zhongqi1112/COVID-19_U.S./blob/master/src/assets/homePage.png" alt="homePage"></p>
