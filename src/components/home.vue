@@ -49,6 +49,8 @@
         </span>
       </v-col>
 
+      <UsaMap/>
+
       <v-col class="xs-12" cols="12">
         <v-data-table
           :mobile-breakpoint="0"
@@ -69,8 +71,13 @@
 </template>
 
 <script>
+import UsaMap from './usaMap';
+
   export default {
     name: 'Home',
+    components: {
+      UsaMap,
+    },
     data: () => ({
       minutesPerHour: 60,
       hoursPerDay: 24,
