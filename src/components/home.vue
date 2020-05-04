@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <v-row class="text-center justify-center">
+
       <v-col class="xs-12" cols="12">
         <p class="display-2 font-weight-bold mb-3">
           COVID-19 U.S.
@@ -49,12 +50,14 @@
         </span>
       </v-col>
 
+      <UsaMap />
+
       <v-col class="xs-12" cols="12">
         <v-data-table
           :mobile-breakpoint="0"
           :headers="headers"
           :items="states"
-          :items-per-page="10"
+          :items-per-page="5"
           :sort-by="['cases']"
           :sort-desc="[true]"
           class="elevation-1"
@@ -69,19 +72,18 @@
 </template>
 
 <script>
+import UsaMap from './usaMap';
   export default {
     name: 'Home',
+    props: [
+      'today',
+      'yesterday',
+      'states',
+    ],
+    components: {
+      UsaMap,
+    },
     data: () => ({
-      minutesPerHour: 60,
-      hoursPerDay: 24,
-      yesterdayConfirmed: 0,
-      updated: 0,
-      newConfirmed: 0,
-      totalConfirmed: 0,
-      totalRecovered: 0,
-      totalDeaths: 0,
-      recoveredRate: 0,
-      deathRate: 0,
       headers: [
         {
           text: 'States',
@@ -94,81 +96,78 @@
         { text: 'Tests', value: 'tests' },
         { text: 'Tests / Million', value: 'testsPerOneMillion' }
       ],
-      statesList: [],
-      polling: null,
-      pollingTime: 30000 // 3 minutes
     }),
     computed: {
-      updatedTime: function () {
-        var time = new Date(this.updated)
-        var updatedDate = time.toLocaleDateString("en-US") + ' ' + time.toLocaleTimeString("en-US")
-        return updatedDate
+      newConfirmed: function () {
+        const hoursPerDay = 24
+        const minutesPerHour = 60
+        var newConfirmed = 0
+        var currentTime = new Date()
+        var utcZero = hoursPerDay - currentTime.getTimezoneOffset() / minutesPerHour
+        // if local time pass UTC 00:00 then the new case is summation of today and yesterday
+        // because the database is updated at UTC 00:00
+        if (currentTime.getHours() >= utcZero) {
+          // TODO: 3 is a magic number to control if add yesterday data to new cases
+          if (this.today.todayCases > this.yesterday.todayCases / 3) {
+            newConfirmed = this.numberWithCommas(this.today.todayCases)
+          } else {
+            if (this.today.todayCases != undefined && this.yesterday.todayCases != undefined) {
+              newConfirmed = this.numberWithCommas(this.today.todayCases + this.yesterday.todayCases)
+            }
+          }
+        } else {
+          newConfirmed = this.numberWithCommas(this.today.todayCases)
+        }
+        return newConfirmed
       },
-      states () {
-        return this.statesList
-      }
-    },
-    created () {
-      this.fetchData()
-      this.fetchStatesData()
-      this.pollingData()
-    },
-    beforeDestroy () {
-      clearInterval(this.polling)
+      totalConfirmed: function () {
+        return this.numberWithCommas(this.today.cases)
+      },
+      totalRecovered: function () {
+        return this.numberWithCommas(this.today.recovered)
+      },
+      totalDeaths: function () {
+        return this.numberWithCommas(this.today.deaths)
+      },
+      recoveredRate: function () {
+        return this.calculateRate(this.today.recovered, this.today.cases, 2)
+      },
+      deathRate: function () {
+        return this.calculateRate(this.today.deaths, this.today.cases, 2)
+      },
+      updatedTime: function () {
+        var updatedTime = ''
+        if (this.today.updated != undefined) {
+          var time = new Date(this.today.updated)
+          updatedTime = time.toLocaleDateString("en-US") + ' ' + time.toLocaleTimeString("en-US")
+        }
+        return updatedTime
+      },
     },
     methods: {
-      async fetchData () {
-        try {
-          // fecth today data
-          var todayData = await fetch('https://corona.lmao.ninja/v2/countries/USA')
-          var today = await todayData.json()
-          // assign data
-          this.updated = today.updated
-          //this.newConfirmed = this.numberWithCommas(today.todayCases)
-          this.totalConfirmed = this.numberWithCommas(today.cases)
-          this.totalRecovered = this.numberWithCommas(today.recovered)
-          this.totalDeaths = this.numberWithCommas(today.deaths)
-          this.recoveredRate = (today.recovered / today.cases * 100).toFixed(2)
-          this.deathRate = (today.deaths / today.cases * 100).toFixed(2)
-          // fetch yesterday data
-          var currentTime = new Date()
-          var timezone = currentTime.getTimezoneOffset() / this.minutesPerHour
-          // if ((currentTime.getHours() === (this.hoursPerDay - timezone) && currentTime.getMinutes() >= this.minutesPerHour / 2) || (currentTime.getHours() > this.hoursPerDay - timezone)) {
-          if (currentTime.getHours() >= this.hoursPerDay - timezone) {
-            var yesterdayData = await fetch('https://corona.lmao.ninja/v2/countries/USA?yesterday=true')
-            var yesterday = await yesterdayData.json()
-            if (today.todayCases > yesterday.todayCases / 2) {
-              this.newConfirmed = this.numberWithCommas(today.todayCases)
-            } else {
-              this.newConfirmed = this.numberWithCommas(today.todayCases + yesterday.todayCases)
-            }
-          } else {
-            this.newConfirmed = this.numberWithCommas(today.todayCases)
-          }
-        } catch(e) {
-          console.error(e)
+      /**
+       * @description convert an integer to a string with commas
+       * @param n integer number
+       */
+      numberWithCommas (n) {
+        var number = 0
+        if (n != undefined) {
+          number = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         }
+        return number
       },
       /**
-       * @description Get US State Totals
+       * @description calculate the rate in decimal number
+       * @param numerator numerator of rate
+       * @param denominator denominator of rate
+       * @param decimal decimal of rate
        */
-      async fetchStatesData () {
-        try {
-          var statesData = await fetch('https://corona.lmao.ninja/v2/states?sort=cases')
-          var states = await statesData.json()
-          this.statesList = states
-        } catch(e) {
-          console.error(e)
+      calculateRate (numerator, denominator, decimal) {
+        var rate = 0
+        if (numerator != undefined && denominator != undefined) {
+          rate = (numerator / denominator * 100).toFixed(decimal)
         }
-      },
-      pollingData () {
-        this.polling = setInterval(() => {
-          this.fetchData()
-          this.fetchStatesData()
-        }, this.pollingTime)
-      },
-      numberWithCommas (n) {
-        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        return rate
       }
     }
   }
