@@ -1,7 +1,13 @@
 {
   "name": "covid19us",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.2.0",
+  "description": "Real-time data of COVID-19 cases in the U.S. simply and intuitive visualization.",
+  "keywords": [
+    "COVID-19",
+    "Real-time",
+    "VueJs",
+    "D3JsV5"
+  ],
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
