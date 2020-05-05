@@ -73,104 +73,107 @@
 
 <script>
 import UsaMap from './usaMap';
-  export default {
-    name: 'Home',
-    props: [
-      'today',
-      'yesterday',
-      'states',
+const _ = require('lodash')
+
+export default {
+  name: 'Home',
+  props: [
+    'today',
+    'yesterday',
+    'states',
+  ],
+  components: {
+    UsaMap,
+  },
+  data: () => ({
+    headers: [
+      {
+        text: 'States',
+        align: 'start',
+        sortable: false,
+        value: 'state',
+      },
+      { text: 'Confirmed', value: 'cases' },
+      { text: 'Active', value: 'active' },
+      { text: 'Tests', value: 'tests' },
+      { text: 'Tests / Million', value: 'testsPerOneMillion' }
     ],
-    components: {
-      UsaMap,
-    },
-    data: () => ({
-      headers: [
-        {
-          text: 'States',
-          align: 'start',
-          sortable: false,
-          value: 'state',
-        },
-        { text: 'Confirmed', value: 'cases' },
-        { text: 'Active', value: 'active' },
-        { text: 'Tests', value: 'tests' },
-        { text: 'Tests / Million', value: 'testsPerOneMillion' }
-      ],
-    }),
-    computed: {
-      newConfirmed: function () {
-        const hoursPerDay = 24
-        const minutesPerHour = 60
-        var newConfirmed = 0
-        var currentTime = new Date()
-        var utcZero = hoursPerDay - currentTime.getTimezoneOffset() / minutesPerHour
-        // if local time pass UTC 00:00 then the new case is summation of today and yesterday
-        // because the database is updated at UTC 00:00
-        if (currentTime.getHours() >= utcZero) {
-          // TODO: 3 is a magic number to control if add yesterday data to new cases
-          if (this.today.todayCases > this.yesterday.todayCases / 3) {
-            newConfirmed = this.numberWithCommas(this.today.todayCases)
-          } else {
-            if (this.today.todayCases != undefined && this.yesterday.todayCases != undefined) {
-              newConfirmed = this.numberWithCommas(this.today.todayCases + this.yesterday.todayCases)
-            }
-          }
-        } else {
+  }),
+  computed: {
+    newConfirmed: function () {
+      const hoursPerDay = 24
+      const minutesPerHour = 60
+      var newConfirmed = 0
+      var currentTime = new Date()
+      var utcZero = hoursPerDay - currentTime.getTimezoneOffset() / minutesPerHour
+      // if local time pass UTC 00:00 then the new case is summation of today and yesterday
+      // because the database is updated at UTC 00:00
+      if (currentTime.getHours() >= utcZero) {
+        // TODO: 3 is a magic number to control if add yesterday data to new cases
+        if (this.today.todayCases > this.yesterday.todayCases / 3) {
           newConfirmed = this.numberWithCommas(this.today.todayCases)
+        } else {
+          if (!_.isUndefined(this.today.todayCases) && !_.isUndefined(this.yesterday.todayCases)) {
+            newConfirmed = this.numberWithCommas(this.today.todayCases + this.yesterday.todayCases)
+          }
         }
-        return newConfirmed
-      },
-      totalConfirmed: function () {
-        return this.numberWithCommas(this.today.cases)
-      },
-      totalRecovered: function () {
-        return this.numberWithCommas(this.today.recovered)
-      },
-      totalDeaths: function () {
-        return this.numberWithCommas(this.today.deaths)
-      },
-      recoveredRate: function () {
-        return this.calculateRate(this.today.recovered, this.today.cases, 2)
-      },
-      deathRate: function () {
-        return this.calculateRate(this.today.deaths, this.today.cases, 2)
-      },
-      updatedTime: function () {
-        var updatedTime = ''
-        if (this.today.updated != undefined) {
-          var time = new Date(this.today.updated)
-          updatedTime = time.toLocaleDateString("en-US") + ' ' + time.toLocaleTimeString("en-US")
-        }
-        return updatedTime
-      },
-    },
-    methods: {
-      /**
-       * @description convert an integer to a string with commas
-       * @param n integer number
-       */
-      numberWithCommas (n) {
-        var number = 0
-        if (n != undefined) {
-          number = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        }
-        return number
-      },
-      /**
-       * @description calculate the rate in decimal number
-       * @param numerator numerator of rate
-       * @param denominator denominator of rate
-       * @param decimal decimal of rate
-       */
-      calculateRate (numerator, denominator, decimal) {
-        var rate = 0
-        if (numerator != undefined && denominator != undefined) {
-          rate = (numerator / denominator * 100).toFixed(decimal)
-        }
-        return rate
+      } else {
+        newConfirmed = this.numberWithCommas(this.today.todayCases)
       }
+      return newConfirmed
+    },
+    totalConfirmed: function () {
+      return this.numberWithCommas(this.today.cases)
+    },
+    totalRecovered: function () {
+      return this.numberWithCommas(this.today.recovered)
+    },
+    totalDeaths: function () {
+      return this.numberWithCommas(this.today.deaths)
+    },
+    recoveredRate: function () {
+      return this.calculateRate(this.today.recovered, this.today.cases, 2)
+    },
+    deathRate: function () {
+      return this.calculateRate(this.today.deaths, this.today.cases, 2)
+    },
+    updatedTime: function () {
+      var updatedTime = ''
+      if (!_.isUndefined(this.today.updated)) {
+        var time = new Date(this.today.updated)
+        updatedTime = time.toLocaleDateString("en-US") + ' ' + time.toLocaleTimeString("en-US")
+      }
+      return updatedTime
+    },
+  },
+  methods: {
+    /**
+     * @description convert an integer to a string with commas
+     * @param value integer number
+     */
+    numberWithCommas (number) {
+      var value = 0
+      if (!_.isUndefined(number)) {
+        //value = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        value = _.replace(_.toString(number), /\B(?=(\d{3})+(?!\d))/g, ',')
+      }
+      return value
+    },
+    /**
+     * @description calculate the rate in decimal number
+     * @param numerator numerator of rate
+     * @param denominator denominator of rate
+     * @param decimal decimal of rate
+     */
+    calculateRate (numerator, denominator, decimal) {
+      var rate = 0
+      if (!_.isUndefined(numerator) && !_.isUndefined(denominator)) {
+        rate = (numerator / denominator * 100).toFixed(decimal)
+      }
+      return rate
     }
   }
+}
 </script>
 
 <style scoped>
