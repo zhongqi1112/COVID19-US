@@ -5,6 +5,7 @@
 <script>
 import * as d3 from "d3";
 import * as topojson from "topojson";
+const _ = require('lodash')
 
 export default {
   name: "UsaMap",
@@ -19,7 +20,7 @@ export default {
       // assign map width and height
       const ratioWidthHeight = 0.585
       const width = window.innerWidth // Use the window's width
-      const height = Math.ceil(width * ratioWidthHeight)
+      const height = _.ceil(width * ratioWidthHeight)
       // assign map color
       const colorMin = "Cornsilk"
       const colorMax = "Maroon"
@@ -28,9 +29,9 @@ export default {
       const legendBase = width
       const legendSize = 0.02
       const legendSpace = 0.002
-      const legendX = 0.83
+      const legendX = 0.8
       const legendY = 0.7
-      const legendFontSize = Math.ceil(legendBase * 0.02)
+      const legendFontSize = _.ceil(legendBase * 0.02)
       const legendMax = 60000
       const legendDomain = [1, 5000, 10000, 30000, legendMax]
       // load map data
@@ -83,7 +84,7 @@ export default {
         .attr("class", "state")
         .attr("fill", function(d) {
           var current = statesData.find(function(element) { return element.state === d.properties.name})
-          if (typeof current !== "undefined") {
+          if (!_.isUndefined(current)) {
             if (current.cases !== 0) {
               return colorScale(casesScale(current.cases))
             } else {
@@ -142,10 +143,12 @@ export default {
           .attr("text-anchor", "start")
           .style("font-size", legendFontSize)
           .text(function() {
+            var low = _.replace(_.toString(legendDomain[i]), /\B(?=(\d{3})+(?!\d))/g, ',')
             if (i === legendDomain.length -1) {
-              return legendDomain[i] + "+"
+              return low + "+"
             } else {
-              return legendDomain[i] + " - " + legendDomain[i+1]
+              var high = _.replace(_.toString(legendDomain[i+1]), /\B(?=(\d{3})+(?!\d))/g, ',')
+              return low + " - " + high
             }
           });
       }
