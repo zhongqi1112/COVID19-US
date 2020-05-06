@@ -25,6 +25,7 @@ export default {
     pollingTime: 30000 // 3 minutes
   }),
   created() {
+    this.track()
     this.fetchData()
     this.pollingData()
   },
@@ -32,6 +33,9 @@ export default {
     clearInterval(this.polling)
   },
   methods: {
+    track () {
+      this.$ga.page('/')
+    },
     /**
      * @description fetch data from database
      */
