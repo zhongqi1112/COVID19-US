@@ -23,19 +23,8 @@ export default {
       // assign map data
       var mapSource = await d3.json("/d3-geomap/counties-albers-10m.json");
       // assign states data
-      var statesData = [];
-      this.statesList.forEach(state => {
-        statesData.push({
-          name: state.state,
-          cases: state.cases,
-          active: state.active,
-          deaths: state.deaths,
-          tests: state.tests,
-          testsPerOneMillion: state.testsPerOneMillion,
-        })
-      });
+      var statesData = this.statesList;
       // configuration of color
-      // var casesMax = d3.max(statesData.map(function(d) { return parseInt(d.cases)}));
       var casesScale = d3.scaleLinear()
         .domain([legendMin, legendMax])  // input
         .range([legendLevelMin, legendLevelMax]); // output
@@ -59,7 +48,7 @@ export default {
       .enter().append("path")
         .attr("class", "state")
         .attr("fill", function(d) {
-          var current = statesData.find(function(element) { return element.name === d.properties.name})
+          var current = statesData.find(function(element) { return element.state === d.properties.name})
           if (ut.isNotUndefined(current)) {
             if (current.cases !== 0) {
               return colorScale(casesScale(current.cases))
@@ -73,10 +62,10 @@ export default {
           tooltip.transition()
             .style("opacity", 0.9);
           tooltip.html(function() {
-            var selectedState = statesData.find(function(element) { return element.name === d.properties.name})
+            var selectedState = statesData.find(function(element) { return element.state === d.properties.name})
             var content = `
               <table style="margin-top: 2.5px;">
-                <tr><td style="text-align: left">State: </td><td style="text-align: right">` + selectedState.name + `</td></tr>
+                <tr><td style="text-align: left">State: </td><td style="text-align: right">` + selectedState.state + `</td></tr>
                 <tr><td style="text-align: left">Confirmed: </td><td style="text-align: right">` + selectedState.cases + `</td></tr>
                 <tr><td style="text-align: left">Active: </td><td style="text-align: right">` + selectedState.active + `</td></tr>
                 <tr><td style="text-align: left">Deceased: </td><td style="text-align: right">` + selectedState.deaths + `</td></tr>
