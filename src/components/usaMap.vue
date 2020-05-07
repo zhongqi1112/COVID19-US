@@ -9,14 +9,11 @@ const _ = require('lodash');
 
 export default {
   name: "UsaMap",
-  data: () => ({
-    //
-  }),
-  created() {
-    this.createMapUs()
-  },
-  methods: {
-    async createMapUs() {
+  props: [
+    'statesList',
+  ],
+  watch: {
+    async statesList() {
       // assign map width and height
       const ratioWidthHeight = 0.585
       const width = window.innerWidth // Use the window's width
@@ -36,18 +33,12 @@ export default {
       const legendMin = 1
       const legendMax = 70000
       const legendDomain = [legendMin, 10000, 20000, 40000, legendMax]
-      // load map data
-      var loadData = await Promise.all([
-        d3.json("/d3-geomap/states-10m.json"),
-        fetch('https://corona.lmao.ninja/v2/states?sort=cases')
-      ]);
-      var statesJson = await loadData[1].json();
       // assign map data
-      var mapData = loadData[0];
+      var mapData = await d3.json("/d3-geomap/states-10m.json");
       var statesMap = topojson.feature(mapData, mapData.objects.states).features;
       // assign states data
       var statesData = [];
-      statesJson.forEach(state => {
+      this.statesList.forEach(state => {
         statesData.push({
           state: state.state,
           cases: state.cases
@@ -70,7 +61,6 @@ export default {
       // configuration of tooltip
       var tooltip = d3.select("#mapUs").append("div")
         .attr("class", "tooltip")
-        .style("opacity", 0);
       // D3 Projection
       var projection = d3.geoAlbersUsa()
         .translate([width / 2, height / 2]) // translate to center of screen
@@ -96,14 +86,13 @@ export default {
         .attr("d", path)
         .on("mouseover", function(d) {
           tooltip.transition()
-            .duration(200)
             .style("opacity", 0.9);
           tooltip.html(function() {
             var selectedState = statesData.find(function(element) { return element.state === d.properties.name})
             var content = `
               <table style="margin-top: 2.5px;">
-                <tr><td>State: </td><td style="text-align: right">` + selectedState.state + `</td></tr>
-                <tr><td>Case: </td><td style="text-align: right">` + selectedState.cases + `</td></tr>
+                <tr><td style="text-align: left">State: </td><td style="text-align: right">` + selectedState.state + `</td></tr>
+                <tr><td style="text-align: left">Confirmed: </td><td style="text-align: right">` + selectedState.cases + `</td></tr>
               </table>`;
             return content;
           })
@@ -112,8 +101,7 @@ export default {
         })
         .on("mouseout", function() {
           tooltip.transition()
-          .duration(500)
-          .style("opacity", 0);
+            .style("opacity", 0);
         });
       // add mesh of states
       svg.append("path")
