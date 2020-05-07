@@ -96,7 +96,14 @@ export default {
               </table>`;
             return content;
           })
-          .style("left", (d3.event.pageX) + "px")
+          .style("left", function() {
+            var tooltipWidth = d3.select('.tooltip').node().getBoundingClientRect().width;
+            if (tooltipWidth + d3.event.pageX > width) {
+              return (d3.event.pageX - tooltipWidth) + "px"
+            } else {
+              return (d3.event.pageX) + "px"
+            }
+          })
           .style("top", (d3.event.pageY) + "px");
         })
         .on("mouseout", function() {
