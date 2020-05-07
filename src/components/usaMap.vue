@@ -21,7 +21,7 @@ export default {
       const legendMin = 1
       const legendMax = 60000
       // assign map data
-      var mapData = await d3.json("/d3-geomap/counties-albers-10m.json");
+      var mapSource = await d3.json("/d3-geomap/counties-albers-10m.json");
       // assign states data
       var statesData = [];
       this.statesList.forEach(state => {
@@ -55,7 +55,7 @@ export default {
       var path = d3.geoPath() // path generator that will convert GeoJSON to SVG paths
       // add states map
       svg.selectAll(".state")
-        .data(topojson.feature(mapData, mapData.objects.states).features)
+        .data(topojson.feature(mapSource, mapSource.objects.states).features)
       .enter().append("path")
         .attr("class", "state")
         .attr("fill", function(d) {
@@ -102,7 +102,7 @@ export default {
         });
       // add mesh of states
       svg.append("path")
-        .datum(topojson.mesh(mapData, mapData.objects.states, (a, b) => a !== b))
+        .datum(topojson.mesh(mapSource, mapSource.objects.states, (a, b) => a !== b))
         .attr("fill", "none")
         .attr("stroke", "gainsboro")
         .attr("stroke-linejoin", "round")
