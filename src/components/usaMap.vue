@@ -5,7 +5,7 @@
 <script>
 import * as d3 from "d3";
 import * as topojson from "topojson";
-const _ = require('lodash')
+const _ = require('lodash');
 
 export default {
   name: "UsaMap",
@@ -22,9 +22,10 @@ export default {
       const width = window.innerWidth // Use the window's width
       const height = _.ceil(width * ratioWidthHeight)
       // assign map color
-      const colorMin = "Cornsilk"
-      const colorMax = "Maroon"
-      const legendLevel = 10
+      const legendLevelMin = 1
+      const legendLevelMax = 10
+      // assign path color
+      const pathColor = "gainsboro"
       // the size of each indicator
       const legendBase = width
       const legendSize = 0.02
@@ -32,8 +33,9 @@ export default {
       const legendX = 0.8
       const legendY = 0.7
       const legendFontSize = _.ceil(legendBase * 0.02)
-      const legendMax = 60000
-      const legendDomain = [1, 5000, 10000, 30000, legendMax]
+      const legendMin = 1
+      const legendMax = 70000
+      const legendDomain = [legendMin, 10000, 20000, 40000, legendMax]
       // load map data
       var loadData = await Promise.all([
         d3.json("/d3-geomap/states-10m.json"),
@@ -54,12 +56,11 @@ export default {
       // configuration of color
       // var casesMax = d3.max(statesData.map(function(d) { return parseInt(d.cases)}));
       var casesScale = d3.scaleLinear()
-        .domain([1, legendMax])
-        .range([1, legendLevel]); // output
-      var colorScale = d3.scaleLinear()
-        .domain([1, legendLevel])
-        .range([colorMin, colorMax]);
-      colorScale.clamp(true)
+        .domain([legendMin, legendMax])  // input
+        .range([legendLevelMin, legendLevelMax]); // output
+      var colorScale = d3.scaleQuantize()
+        .domain([legendLevelMin, legendLevelMax])
+        .range(d3.schemeReds[9]); // single-hue color schemes support a size k ranging from 3 to 9.
       // add the SVG to the page
       var svg = d3.select("#mapUs").append("svg")
         .attr("width", width)
@@ -88,7 +89,7 @@ export default {
             if (current.cases !== 0) {
               return colorScale(casesScale(current.cases))
             } else {
-              return colorScale(casesScale(1))
+              return colorScale(casesScale(legendMin))
             }
           }
         })
@@ -118,7 +119,7 @@ export default {
       svg.append("path")
         .datum(topojson.mesh(mapData, mapData.objects.states, (a, b) => a !== b))
         .attr("fill", "none")
-        .attr("stroke", "white")
+        .attr("stroke", pathColor)
         .attr("stroke-linejoin", "round")
         .attr("d", path);
       // add legend title
