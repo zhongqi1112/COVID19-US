@@ -25,15 +25,14 @@ export default {
   data: () => ({
     headers: [
       {
-        text: 'States',
+        text: 'State',
         align: 'start',
         sortable: false,
         value: 'state',
       },
       { text: 'Confirmed', value: 'cases' },
       { text: 'Active', value: 'active' },
-      { text: 'Tests', value: 'tests' },
-      { text: 'Tests / Million', value: 'testsPerOneMillion' },
+      { text: 'Deceased', value: 'deaths' },
     ]
   })
 }

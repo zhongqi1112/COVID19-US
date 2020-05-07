@@ -55,7 +55,7 @@
 </template>
 
 <script>
-const _ = require('lodash')
+import * as ut from '../js/utils';
 
 export default {
   name: 'Home',
@@ -78,59 +78,32 @@ export default {
       if (currentTime.getHours() >= utcZero) {
         // TODO: 3 is a magic number to control if add yesterday data to new cases
         if (this.today.todayCases > this.yesterday.todayCases / 3) {
-          newConfirmed = this.numberWithCommas(this.today.todayCases)
+          newConfirmed = ut.numberWithCommas(this.today.todayCases)
         } else {
-          if (!_.isUndefined(this.today.todayCases) && !_.isUndefined(this.yesterday.todayCases)) {
-            newConfirmed = this.numberWithCommas(this.today.todayCases + this.yesterday.todayCases)
+          if (ut.isNotUndefined(this.today.todayCases) && ut.isNotUndefined(this.yesterday.todayCases)) {
+            newConfirmed = ut.numberWithCommas(this.today.todayCases + this.yesterday.todayCases)
           }
         }
       } else {
-        newConfirmed = this.numberWithCommas(this.today.todayCases)
+        newConfirmed = ut.numberWithCommas(this.today.todayCases)
       }
       return newConfirmed
     },
     totalConfirmed: function () {
-      return this.numberWithCommas(this.today.cases)
+      return ut.numberWithCommas(this.today.cases)
     },
     totalRecovered: function () {
-      return this.numberWithCommas(this.today.recovered)
+      return ut.numberWithCommas(this.today.recovered)
     },
     totalDeaths: function () {
-      return this.numberWithCommas(this.today.deaths)
+      return ut.numberWithCommas(this.today.deaths)
     },
     recoveredRate: function () {
-      return this.calculateRate(this.today.recovered, this.today.cases, 2)
+      return ut.calculateRate(this.today.recovered, this.today.cases, 2)
     },
     deathRate: function () {
-      return this.calculateRate(this.today.deaths, this.today.cases, 2)
+      return ut.calculateRate(this.today.deaths, this.today.cases, 2)
     },
-  },
-  methods: {
-    /**
-     * @description convert an integer to a string with commas
-     * @param value integer number
-     */
-    numberWithCommas (number) {
-      var value = 0
-      if (!_.isUndefined(number)) {
-        //value = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        value = _.replace(_.toString(number), /\B(?=(\d{3})+(?!\d))/g, ',')
-      }
-      return value
-    },
-    /**
-     * @description calculate the rate in decimal number
-     * @param numerator numerator of rate
-     * @param denominator denominator of rate
-     * @param decimal decimal of rate
-     */
-    calculateRate (numerator, denominator, decimal) {
-      var rate = 0
-      if (!_.isUndefined(numerator) && !_.isUndefined(denominator)) {
-        rate = (numerator / denominator * 100).toFixed(decimal)
-      }
-      return rate
-    }
   }
 }
 </script>

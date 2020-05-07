@@ -7,6 +7,7 @@
 <script>
 import * as d3 from "d3";
 import * as topojson from "topojson";
+import * as ut from '../js/utils';
 const _ = require('lodash');
 
 export default {
@@ -33,7 +34,7 @@ export default {
       const legendY = 0.7
       const legendFontSize = _.ceil(legendBase * 0.02)
       const legendMin = 1
-      const legendMax = 70000
+      const legendMax = 60000
       const legendDomain = [legendMin, 10000, 20000, 40000, legendMax]
       // assign map data
       var mapData = await d3.json("/d3-geomap/states-10m.json");
@@ -82,7 +83,7 @@ export default {
         .attr("class", "state")
         .attr("fill", function(d) {
           var current = statesData.find(function(element) { return element.name === d.properties.name})
-          if (!_.isUndefined(current)) {
+          if (ut.isNotUndefined(current)) {
             if (current.cases !== 0) {
               return colorScale(casesScale(current.cases))
             } else {
@@ -101,7 +102,8 @@ export default {
                 <tr><td style="text-align: left">State: </td><td style="text-align: right">` + selectedState.name + `</td></tr>
                 <tr><td style="text-align: left">Confirmed: </td><td style="text-align: right">` + selectedState.cases + `</td></tr>
                 <tr><td style="text-align: left">Active: </td><td style="text-align: right">` + selectedState.active + `</td></tr>
-                <tr><td style="text-align: left">Deaths: </td><td style="text-align: right">` + selectedState.deaths + `</td></tr>
+                <tr><td style="text-align: left">Deceased: </td><td style="text-align: right">` + selectedState.deaths + `</td></tr>
+                <tr><td style="text-align: left">Deceased Rate: </td><td style="text-align: right">` + ut.calculateRate(selectedState.deaths, selectedState.cases, 2) + '%' + `</td></tr>
                 <tr><td style="text-align: left">Tests: </td><td style="text-align: right">` + selectedState.tests + `</td></tr>
                 <tr><td style="text-align: left">Tests/Million: </td><td style="text-align: right">` + selectedState.testsPerOneMillion + `</td></tr>
               </table>`;
