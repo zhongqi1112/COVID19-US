@@ -5,7 +5,7 @@
         <v-data-table
           :mobile-breakpoint="0"
           :headers="headers"
-          :items="states"
+          :items="statesList"
           :items-per-page="5"
           :sort-by="['cases']"
           :sort-desc="[true]"
@@ -20,7 +20,7 @@
 export default {
   name: 'StatesTable',
   props: [
-    'states',
+    'statesList',
   ],
   data: () => ({
     headers: [
@@ -33,7 +33,7 @@ export default {
       { text: 'Confirmed', value: 'cases' },
       { text: 'Active', value: 'active' },
       { text: 'Tests', value: 'tests' },
-      { text: 'Tests / Million', value: 'testsPerOneMillion' }
+      { text: 'Tests / Million', value: 'testsPerOneMillion' },
     ]
   })
 }
@@ -42,7 +42,7 @@ export default {
 <style scoped>
 /* reset padding of table*/
 .container {
-  padding: 0px 6px;
+  padding: 0px 12px;
 }
 
 /* decrease padding for table body */

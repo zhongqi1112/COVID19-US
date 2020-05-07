@@ -1,5 +1,7 @@
 <template>
+
   <div class="d3-geomap" id="mapUs"></div>
+
 </template>
 
 <script>
@@ -40,8 +42,12 @@ export default {
       var statesData = [];
       this.statesList.forEach(state => {
         statesData.push({
-          state: state.state,
-          cases: state.cases
+          name: state.state,
+          cases: state.cases,
+          active: state.active,
+          deaths: state.deaths,
+          tests: state.tests,
+          testsPerOneMillion: state.testsPerOneMillion,
         })
       });
       // configuration of color
@@ -75,7 +81,7 @@ export default {
       .enter().append("path")
         .attr("class", "state")
         .attr("fill", function(d) {
-          var current = statesData.find(function(element) { return element.state === d.properties.name})
+          var current = statesData.find(function(element) { return element.name === d.properties.name})
           if (!_.isUndefined(current)) {
             if (current.cases !== 0) {
               return colorScale(casesScale(current.cases))
@@ -89,11 +95,15 @@ export default {
           tooltip.transition()
             .style("opacity", 0.9);
           tooltip.html(function() {
-            var selectedState = statesData.find(function(element) { return element.state === d.properties.name})
+            var selectedState = statesData.find(function(element) { return element.name === d.properties.name})
             var content = `
               <table style="margin-top: 2.5px;">
-                <tr><td style="text-align: left">State: </td><td style="text-align: right">` + selectedState.state + `</td></tr>
+                <tr><td style="text-align: left">State: </td><td style="text-align: right">` + selectedState.name + `</td></tr>
                 <tr><td style="text-align: left">Confirmed: </td><td style="text-align: right">` + selectedState.cases + `</td></tr>
+                <tr><td style="text-align: left">Active: </td><td style="text-align: right">` + selectedState.active + `</td></tr>
+                <tr><td style="text-align: left">Deaths: </td><td style="text-align: right">` + selectedState.deaths + `</td></tr>
+                <tr><td style="text-align: left">Tests: </td><td style="text-align: right">` + selectedState.tests + `</td></tr>
+                <tr><td style="text-align: left">Tests/Million: </td><td style="text-align: right">` + selectedState.testsPerOneMillion + `</td></tr>
               </table>`;
             return content;
           })

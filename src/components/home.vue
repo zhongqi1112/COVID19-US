@@ -4,7 +4,7 @@
 
       <v-col class="xs-12" cols="12">
         <p class="display-2 font-weight-bold mb-3">
-          COVID-19 U.S.
+          {{ title }}
         </p>
       </v-col>
 
@@ -50,14 +50,11 @@
         </span>
       </v-col>
 
-      <UsaMap :statesList='states'/>
-
     </v-row>
   </v-container>
 </template>
 
 <script>
-import UsaMap from './usaMap';
 const _ = require('lodash')
 
 export default {
@@ -65,13 +62,9 @@ export default {
   props: [
     'today',
     'yesterday',
-    'states',
   ],
-  components: {
-    UsaMap,
-  },
   data: () => ({
-    //
+    title: 'COVID-19 U.S.'
   }),
   computed: {
     newConfirmed: function () {

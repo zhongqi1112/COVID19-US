@@ -33,6 +33,6 @@ export default {
 <style scoped>
 /* reset padding*/
 .container {
-  padding: 0px;
+  padding: 0px 12px;
 }
 </style>

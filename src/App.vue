@@ -1,20 +1,17 @@
 <template>
   <v-app>
     <v-content>
-      <Home
-        :today='loadToday'
-        :yesterday='loadYesterday'
-        :states='loadStates'/>
-      <StatesTable
-        :states='loadStates'/>
-      <Footer
-        :today='loadToday'/>
+      <Home :today='loadToday' :yesterday='loadYesterday'/>
+      <UsaMap :statesList='loadStates'/>
+      <StatesTable :statesList='loadStates'/>
+      <Footer :today='loadToday'/>
     </v-content>
   </v-app>
 </template>
 
 <script>
 import Home from './components/home';
+import UsaMap from './components/usaMap';
 import StatesTable from './components/statesTable';
 import Footer from './components/footer';
 
@@ -22,6 +19,7 @@ export default {
   name: 'App',
   components: {
     Home,
+    UsaMap,
     StatesTable,
     Footer,
   },
