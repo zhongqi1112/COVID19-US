@@ -15,7 +15,7 @@ export default {
   watch: {
     async statesList() {
       // assign map width and height
-      const ratioWidthHeight = 0.585
+      const ratioWidthHeight = 0.58136645962
       const width = window.innerWidth // Use the window's width
       const height = _.ceil(width * ratioWidthHeight)
       // assign map color
@@ -61,6 +61,7 @@ export default {
       // configuration of tooltip
       var tooltip = d3.select("#mapUs").append("div")
         .attr("class", "tooltip")
+        .style("opacity", 0);
       // D3 Projection
       var projection = d3.geoAlbersUsa()
         .translate([width / 2, height / 2]) // translate to center of screen
