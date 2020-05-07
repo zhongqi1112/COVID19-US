@@ -5,6 +5,8 @@
         :today='loadToday'
         :yesterday='loadYesterday'
         :states='loadStates'/>
+      <StatesTable
+        :states='loadStates'/>
       <Footer
         :today='loadToday'/>
     </v-content>
@@ -13,12 +15,14 @@
 
 <script>
 import Home from './components/home';
+import StatesTable from './components/statesTable';
 import Footer from './components/footer';
 
 export default {
   name: 'App',
   components: {
     Home,
+    StatesTable,
     Footer,
   },
   data: () => ({

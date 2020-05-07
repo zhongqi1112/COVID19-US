@@ -52,18 +52,6 @@
 
       <UsaMap :statesList='states'/>
 
-      <v-col class="xs-12" cols="12">
-        <v-data-table
-          :mobile-breakpoint="0"
-          :headers="headers"
-          :items="states"
-          :items-per-page="5"
-          :sort-by="['cases']"
-          :sort-desc="[true]"
-          class="elevation-1"
-        ></v-data-table>
-      </v-col>
-
     </v-row>
   </v-container>
 </template>
@@ -83,18 +71,7 @@ export default {
     UsaMap,
   },
   data: () => ({
-    headers: [
-      {
-        text: 'States',
-        align: 'start',
-        sortable: false,
-        value: 'state',
-      },
-      { text: 'Confirmed', value: 'cases' },
-      { text: 'Active', value: 'active' },
-      { text: 'Tests', value: 'tests' },
-      { text: 'Tests / Million', value: 'testsPerOneMillion' }
-    ],
+    //
   }),
   computed: {
     newConfirmed: function () {
@@ -169,25 +146,5 @@ export default {
 /* remove margin from p tag */
 .v-application p {
   margin-bottom: 0px !important;
-}
-
-/* remove margin from  column*/
-.v-application .xs-12 {
-  margin-bottom: 0px !important;
-}
-
-/* decrease padding for table body */
-/deep/ div.v-data-table td {
-  padding: 0 3px;
-}
-
-/* decrease padding for table header */
-/deep/ div.v-data-table th {
-  padding: 0 3px;
-}
-
-/* decrease margin for table footter  */
-/deep/ div.v-data-footer__pagination {
-  margin: 0 4px;
 }
 </style>
