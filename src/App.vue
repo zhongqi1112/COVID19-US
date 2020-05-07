@@ -3,8 +3,7 @@
     <v-content>
       <Home
         :today='loadToday'
-        :yesterday='loadYesterday'
-        :states='loadStates'/>
+        :yesterday='loadYesterday'/>
     </v-content>
   </v-app>
 </template>
@@ -48,10 +47,6 @@ export default {
       var yesterdayData = await fetch('https://corona.lmao.ninja/v2/countries/USA?yesterday=true')
       var yesterdayJson = await yesterdayData.json()
       this.loadYesterday = yesterdayJson
-      // fecth states data
-      var statesData = await fetch('https://corona.lmao.ninja/v2/states?sort=cases')
-      var statesJson = await statesData.json()
-      this.loadStates = statesJson
     },
     /**
      * @description poll data periodically

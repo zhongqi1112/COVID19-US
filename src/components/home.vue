@@ -80,12 +80,12 @@ export default {
   props: [
     'today',
     'yesterday',
-    'states',
   ],
   components: {
     UsaMap,
   },
   data: () => ({
+    states: [],
     headers: [
       {
         text: 'States',
@@ -99,6 +99,9 @@ export default {
       { text: 'Tests / Million', value: 'testsPerOneMillion' }
     ],
   }),
+  created () {
+    this.fetchStateData()
+  },
   computed: {
     newConfirmed: function () {
       const hoursPerDay = 24
@@ -147,6 +150,15 @@ export default {
     },
   },
   methods: {
+    /**
+     * @description fetch data from database
+     */
+    async fetchStateData () {
+      // fecth states data
+      var statesData = await fetch('https://corona.lmao.ninja/v2/states?sort=cases')
+      var statesJson = await statesData.json()
+      this.states = statesJson
+    },
     /**
      * @description convert an integer to a string with commas
      * @param value integer number
