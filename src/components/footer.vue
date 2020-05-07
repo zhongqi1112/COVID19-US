@@ -28,3 +28,11 @@ export default {
   }
 }
 </script>
+
+
+<style scoped>
+/* reset padding*/
+.container {
+  padding: 0px;
+}
+</style>
