@@ -1,14 +1,11 @@
 <template>
-
   <div class="d3-geomap" id="mapUs"></div>
-
 </template>
 
 <script>
 import * as d3 from "d3";
 import * as topojson from "topojson";
 import * as ut from '../js/utils';
-const _ = require('lodash');
 
 export default {
   name: "UsaMap",
@@ -17,28 +14,14 @@ export default {
   ],
   watch: {
     async statesList() {
-      // assign map width and height
-      const ratioWidthHeight = 0.58136645962
-      const width = window.innerWidth // Use the window's width
-      const height = _.ceil(width * ratioWidthHeight)
       // assign map color
       const legendLevelMin = 1
       const legendLevelMax = 10
-      // assign path color
-      const pathColor = "gainsboro"
       // the size of each indicator
-      const legendBase = width
-      const legendSize = 0.02
-      const legendSpace = 0.002
-      const legendX = 0.8
-      const legendY = 0.7
-      const legendFontSize = _.ceil(legendBase * 0.02)
       const legendMin = 1
       const legendMax = 60000
-      const legendDomain = [legendMin, 10000, 20000, 40000, legendMax]
       // assign map data
-      var mapData = await d3.json("/d3-geomap/states-10m.json");
-      var statesMap = topojson.feature(mapData, mapData.objects.states).features;
+      var mapData = await d3.json("/d3-geomap/counties-albers-10m.json");
       // assign states data
       var statesData = [];
       this.statesList.forEach(state => {
@@ -60,25 +43,19 @@ export default {
         .domain([legendLevelMin, legendLevelMax])
         .range(d3.schemeReds[9]); // single-hue color schemes support a size k ranging from 3 to 9.
       // add the SVG to the page
-      var svg = d3.select("#mapUs").append("svg")
-        .attr("width", width)
-        .attr("height", height);
+      const svg = d3.select("#mapUs").append("svg")
+        .attr("viewBox", [0, 0, 975, 610]);
       svg.append("g")
-        .attr("transform", "translate(0, 0)");
+        .attr("transform", "translate(610, 20)");
       // configuration of tooltip
       var tooltip = d3.select("#mapUs").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
-      // D3 Projection
-      var projection = d3.geoAlbersUsa()
-        .translate([width / 2, height / 2]) // translate to center of screen
-        .scale(width); // scale things down so see entire US
       // Define path generator
       var path = d3.geoPath() // path generator that will convert GeoJSON to SVG paths
-        .projection(projection);  // tell path generator to use albersUsa projection
       // add states map
       svg.selectAll(".state")
-        .data(statesMap)
+        .data(topojson.feature(mapData, mapData.objects.states).features)
       .enter().append("path")
         .attr("class", "state")
         .attr("fill", function(d) {
@@ -111,7 +88,7 @@ export default {
           })
           .style("left", function() {
             var tooltipWidth = d3.select('.tooltip').node().getBoundingClientRect().width;
-            if (tooltipWidth + d3.event.pageX > width) {
+            if (tooltipWidth + d3.event.pageX > window.innerWidth) {
               return (d3.event.pageX - tooltipWidth) + "px"
             } else {
               return (d3.event.pageX) + "px"
@@ -127,40 +104,9 @@ export default {
       svg.append("path")
         .datum(topojson.mesh(mapData, mapData.objects.states, (a, b) => a !== b))
         .attr("fill", "none")
-        .attr("stroke", pathColor)
+        .attr("stroke", "gainsboro")
         .attr("stroke-linejoin", "round")
         .attr("d", path);
-      // add legend title
-      svg.append("text")
-        .attr("y", height * legendY)
-        .attr("x", width * legendX)
-        .attr("text-anchor", "left")
-        .style("font-size", legendFontSize)
-        .text("Confirmed");
-      // add legend indicator
-      for(let i = 0; i < legendDomain.length; i++) {
-        // add legend indicator
-        svg.append("rect")
-          .attr("y", height * legendY + (i + 1) * legendBase * (legendSize + legendSpace) - legendBase * legendSize)
-          .attr("x", width * legendX)
-          .attr("width", legendBase * legendSize)
-          .attr("height", legendBase * legendSize)
-          .style("fill", colorScale(casesScale(legendDomain[i])));
-        svg.append("text")
-          .attr("y", height * legendY + (i + 1) * width * (legendSize + legendSpace))
-          .attr("x", width * (legendX + legendSize + legendSpace))
-          .attr("text-anchor", "start")
-          .style("font-size", legendFontSize)
-          .text(function() {
-            var low = _.replace(_.toString(legendDomain[i]), /\B(?=(\d{3})+(?!\d))/g, ',')
-            if (i === legendDomain.length -1) {
-              return low + "+"
-            } else {
-              var high = _.replace(_.toString(legendDomain[i+1]), /\B(?=(\d{3})+(?!\d))/g, ',')
-              return low + " - " + high
-            }
-          });
-      }
     }
   }
 }
@@ -173,7 +119,7 @@ export default {
 }
 
 path:hover {
-  fill-opacity: .7;
+  fill-opacity: 0.7;
 }
 
 div.tooltip {
