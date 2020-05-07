@@ -5,17 +5,21 @@
         :today='loadToday'
         :yesterday='loadYesterday'
         :states='loadStates'/>
+      <Footer
+        :today='loadToday'/>
     </v-content>
   </v-app>
 </template>
 
 <script>
 import Home from './components/home';
+import Footer from './components/footer';
 
 export default {
   name: 'App',
   components: {
     Home,
+    Footer,
   },
   data: () => ({
     loadToday: [],
