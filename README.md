@@ -53,5 +53,9 @@ npm run serve
 npm run build
 ```
 
+## Data Source
+[Open Disease Data](https://corona.lmao.ninja/)
+
+
 ## Preview
 <p align="center"><img width="350" src="https://github.com/zhongqi1112/COVID19-US/blob/master/src/assets/homePage.png" alt="homePage"></p>
