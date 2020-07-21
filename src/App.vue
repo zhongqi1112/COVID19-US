@@ -15,6 +15,8 @@ import UsaMap from './components/usaMap';
 import StatesTable from './components/statesTable';
 import Footer from './components/footer';
 
+const DB_URL = 'https://disease.sh/v3/covid-19/'
+
 export default {
   name: 'App',
   components: {
@@ -61,19 +63,19 @@ export default {
     },
     async fetchTodayData () {
       // fecth today data
-      var todayData = await fetch('https://corona.lmao.ninja/v2/countries/USA')
+      var todayData = await fetch(DB_URL + 'countries/USA')
       var todayJson = await todayData.json()
       this.loadToday = todayJson
     },
     async fetchYesterdayData () {
       // fecth yesterday data
-      var yesterdayData = await fetch('https://corona.lmao.ninja/v2/countries/USA?yesterday=true')
+      var yesterdayData = await fetch(DB_URL + 'countries/USA?yesterday=true')
       var yesterdayJson = await yesterdayData.json()
       this.loadYesterday = yesterdayJson
     },
     async fetchStateData () {
       // fecth states data
-      var statesData = await fetch('https://corona.lmao.ninja/v2/states?sort=cases')
+      var statesData = await fetch(DB_URL + 'states?sort=cases')
       var statesJson = await statesData.json()
       this.loadStates = statesJson
     }
