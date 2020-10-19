@@ -19,7 +19,7 @@ export default {
       const legendLevelMax = 10
       // the size of each indicator
       const legendMin = 1
-      const legendMax = 60000
+      const legendMax = 500000
       // assign map data
       var mapSource = await d3.json("/d3-geomap/counties-albers-10m.json");
       // assign states data
