@@ -21,9 +21,12 @@
         <p class="subheading font-weight-regular">
           Confirmed
         </p>
-        <h2 class="display-3 font-weight-bold mb-3">
+        <span class="display-3 font-weight-bold mb-3">
           {{ totalConfirmed }}
-        </h2>
+        </span>
+        <span style="font-size:26px">
+          {{ confirmedRate }}%
+        </span>
       </v-col>
 
       <v-col class="xs-12 green--text" cols="12">
@@ -64,7 +67,8 @@ export default {
     'yesterday',
   ],
   data: () => ({
-    title: 'COVID-19 U.S.'
+    title: 'COVID-19 U.S.',
+    usPopulation: 331002651
   }),
   computed: {
     newConfirmed: function () {
@@ -104,6 +108,9 @@ export default {
     deathRate: function () {
       return ut.calculateRate(this.today.deaths, this.today.cases, 2)
     },
+    confirmedRate: function () {
+      return ut.calculateRate(this.today.cases, this.usPopulation, 4)
+    }
   }
 }
 </script>
