@@ -1,4 +1,10 @@
 pipeline {
+    environment {
+        registry = "stephenwangmath/covid19us"
+        registryCredential = 'dockerhub'
+        dockerImage = ''
+    }
+
     agent any
 
     tools {nodejs 'nodejs'}
@@ -22,6 +28,28 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'npm run build'
+            }
+        }
+        stage('Build Image') {
+            steps {
+                script {
+                  dockerImage = docker.build covid19us + ":$BUILD_NUMBER"
+                }
+            }
+        }
+        stage('Deploy Iamge') {
+            steps {
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+        stage('Remove Unused docker image') {
+            steps{
+                sh "docker rmi $covid19us:$BUILD_NUMBER"
+                sh "docker rmi $covid19us:latest"
             }
         }
     }
