@@ -36,8 +36,8 @@ pipeline {
         }
         stage('Remove Image') {
             steps{
-                sh "docker rmi $covid19us:$BUILD_NUMBER"
-                sh "docker rmi $covid19us:latest"
+                sh "docker rmi $registry:$BUILD_NUMBER"
+                sh "docker rmi $registry:latest"
             }
         }
     }
