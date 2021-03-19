@@ -20,16 +20,6 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Setup') {
-            steps {
-                sh 'npm install'
-            }
-        }
-        stage('Build') {
-            steps {
-                sh 'npm run build'
-            }
-        }
         stage('Build Image') {
             steps {
                 script {
@@ -46,7 +36,7 @@ pipeline {
                 }
             }
         }
-        stage('Remove Unused docker image') {
+        stage('Remove Image') {
             steps{
                 sh "docker rmi $covid19us:$BUILD_NUMBER"
                 sh "docker rmi $covid19us:latest"
